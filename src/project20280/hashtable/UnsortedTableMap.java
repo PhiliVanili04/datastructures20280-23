@@ -28,9 +28,17 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
     /**
      * Returns the index of an entry with equal key, or -1 if none found.
      */
-    private int findIndex(K key) {
+    int findIndex(K key) {
         // TODO
-        return 0;
+        int n = table.size();
+        for(int i = 0; i < n; i++)
+        {
+            if(table.get(i).getKey().equals(key))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     // public methods
@@ -55,7 +63,12 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
     @Override
     public V get(K key) {
         // TODO
-        return null;
+        int i = findIndex(key);
+        if(i == -1)
+        {
+            return null;
+        }
+        return table.get(i).getValue();
     }
 
     /**
@@ -71,7 +84,14 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
     @Override
     public V put(K key, V value) {
         // TODO
-        return null;
+        int i = findIndex(key);
+        if(i == -1)
+        {
+            table.add(new MapEntry<>(key, value));
+            return null;
+        }else{
+            return table.get(i).setValue(value);
+        }
     }
 
     /**
@@ -85,7 +105,27 @@ public class UnsortedTableMap<K, V> extends AbstractMap<K, V> {
     @Override
     public V remove(K key) {
         // TODO
-        return null;
+        if (key == null)
+        {
+            throw new IllegalArgumentException("Error");
+        }
+        int i = findIndex(key);//find index of the key
+        int n = size();//get size
+        if(i==-1)
+        {
+            return null;
+        }
+        V result = table.get(i).getValue();//get value to be removed
+        if( i != n -1)
+        {
+            table.set(i, table.get(n-1));//replace element with the last element
+            table.remove(n-1);
+        }
+
+        return result;
+    }
+    public void clear() {
+        table.clear();
     }
 
     // ---------------- nested EntryIterator class ----------------

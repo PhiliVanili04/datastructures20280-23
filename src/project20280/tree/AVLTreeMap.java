@@ -32,7 +32,7 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      */
     protected int height(Position<Entry<K, V>> p) {
         // TODO
-        return 0;
+        return tree.getAux(p);
     }
 
     /**
@@ -40,6 +40,7 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      */
     protected void recomputeHeight(Position<Entry<K, V>> p) {
         // TODO
+        tree.setAux(p, 1 + Math.max(height(left(p)), height(right(p))));
     }
 
     /**
@@ -47,7 +48,7 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      */
     protected boolean isBalanced(Position<Entry<K, V>> p) {
         // TODO
-        return false;
+        return Math.abs(height(left(p)) - height(right(p))) <= 1;
     }
 
     /**
@@ -55,7 +56,21 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      */
     protected Position<Entry<K, V>> tallerChild(Position<Entry<K, V>> p) {
         // TODO
-        return null;
+        if (height(left(p)) > height(right(p)))
+        {
+            return left(p);
+        }
+        if (height(left(p)) < height(right(p)))
+        {
+            return right(p);
+        }
+        if (isRoot(p)){
+            return left(p);
+        }
+        if (p == left(parent(p))){
+            return left(p);
+        }
+        else return right(p);
     }
 
     /**
@@ -65,6 +80,20 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
      */
     protected void rebalance(Position<Entry<K, V>> p) {
         // TODO
+        int oldHeight, newHeight;
+        do {
+            oldHeight = height(p);
+            if (!isBalanced(p)) {
+
+
+                p = restructure(tallerChild(tallerChild(p)));
+                recomputeHeight(left(p));
+                recomputeHeight(right(p));
+                }
+            recomputeHeight(p);
+            newHeight = height(p);
+            p = parent(p);
+            } while (oldHeight != newHeight && p != null);
     }
 
     /**
@@ -81,6 +110,10 @@ public class AVLTreeMap<K, V> extends TreeMap<K, V> {
     @Override
     protected void rebalanceDelete(Position<Entry<K, V>> p) {
         // TODO
+        if (!isRoot(p))
+        {
+            rebalance(parent(p));
+        }
     }
 
     /**

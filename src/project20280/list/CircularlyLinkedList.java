@@ -28,8 +28,8 @@ public class CircularlyLinkedList<E> implements List<E> {
         }
     }
 
-    private final Node<E> tail = null;
-    private final int size = 0;
+    private Node<E> tail = null;
+    private int size;
 
     public CircularlyLinkedList() {
 
@@ -43,7 +43,17 @@ public class CircularlyLinkedList<E> implements List<E> {
     @Override
     public E get(int i) {
         // TODO
-        return null;
+        if(i < 0|| i >= size)
+        {
+            System.out.println("Error");
+        }
+        Node<E> curr = tail.next;
+        for(int j = 0; j < i; j++)
+        {
+            curr = curr.next;
+        }
+
+        return curr.data;
     }
 
     /**
@@ -55,17 +65,82 @@ public class CircularlyLinkedList<E> implements List<E> {
      */
     @Override
     public void add(int i, E e) {
+        if(i < 0 || i > size())
+        {
+            System.out.println("Error");
+        }
+            Node<E> newNode = new Node<>(e, null);
+        if(isEmpty())
+        {
+            newNode.next = newNode;
+            tail = newNode;
+        }else if(i==0)
+        {
+            newNode.next = tail.next;
+            tail.next=newNode;
+        }else{
+            Node<E> curr = tail.next;
+            for(int j = 0; j<i-1;j++)
+            {
+                curr = curr.next;
+            }
+            newNode.next = curr.next;
+            curr.next = newNode;
+            if(i == size)
+            {
+                tail = newNode;
+            }
+        }
+        size++;
+
+
         // TODO
     }
 
     @Override
     public E remove(int i) {
         // TODO
-        return null;
+        if(i < 0|| i >= size||isEmpty())
+        {
+            System.out.println("Error");
+        }
+        Node<E> curr = tail.next;
+        E removedData = null;
+        if(i == 0) {
+            removedData = curr.data;
+
+
+            if (i == 1) {
+                tail = null;
+            } else {
+
+                tail.next = curr.next;
+            }
+        }
+        else{
+            for(int j = 0; j < i-1;j++)
+            {
+                curr= curr.next;
+            }
+            removedData = curr.next.data;
+            if(i==size -1)
+            {
+                tail = curr;
+            }
+            curr.next = curr.next.next;
+        }
+        size--;
+
+        return removedData;
     }
 
     public void rotate() {
         // TODO
+        if(tail != null)
+        {
+            tail= tail.getNext();
+        }
+
     }
 
     private class CircularlyLinkedListIterator<E> implements Iterator<E> {
@@ -98,23 +173,67 @@ public class CircularlyLinkedList<E> implements List<E> {
     @Override
     public E removeFirst() {
         // TODO
-        return null;
+        if(isEmpty())
+        {
+            return null;
+        }
+        Node<E> head = tail.getNext();
+        if(head == tail){
+            tail = null;
+        }else{
+            tail.setNext((head.getNext()));
+        }
+        size--;
+
+        return head.getData();
     }
 
     @Override
     public E removeLast() {
         // TODO
-        return null;
+        if(isEmpty())
+        {
+            return null;
+        }
+        if(size == 1)
+        {
+            return removeFirst();
+        }else{
+            Node<E> curr = tail.getNext();
+            while(curr.getNext() != tail)
+            {
+                curr = curr.getNext();
+            }
+            E removedData = tail.getData();
+            tail = curr;
+            tail.setNext(curr.getNext().getNext());
+            size--;
+            return removedData;
+        }
+
+
     }
 
     @Override
     public void addFirst(E e) {
         // TODO
+        if(size == 0)
+        {
+            tail = new Node<>(e, null);
+            tail.setNext(tail);
+
+        }else{
+            Node<E> newNode = new Node<>(e, tail.getNext());
+            tail.setNext(newNode);
+        }
+        size++;
     }
 
     @Override
     public void addLast(E e) {
         // TODO
+        addFirst(e);
+        tail= tail.getNext();
     }
 
 

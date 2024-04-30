@@ -44,32 +44,46 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
      */
     public HeapPriorityQueue(K[] keys, V[] values) {
         // TODO
+        super();
+        if(keys == null || values == null)
+        {
+            System.out.println("Error");
+        }
+        if(keys.length != values.length)
+        {
+            System.out.println("Error");
+        }
+        for(int i = 0; i < keys.length; i++)
+        {
+            heap.add(new PQEntry<>(keys[i], values[i]));
+        }
+heapify();
     }
 
     // protected utilities
     protected int parent(int j) {
         // TODO
-        return 0;
+        return (j -1)/2;
     }
 
     protected int left(int j) {
         // TODO
-        return 0;
+        return 2*j +1;
     }
 
     protected int right(int j) {
         // TODO
-        return 0;
+        return 2*j+2;
     }
 
     protected boolean hasLeft(int j) {
         // TODO
-        return false;
+        return left(j) < heap.size();
     }
 
     protected boolean hasRight(int j) {
         // TODO
-        return false;
+        return right(j) < heap.size();
     }
 
     /**
@@ -77,6 +91,9 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
      */
     protected void swap(int i, int j) {
         // TODO
+        Entry<K, V> temp = heap.get(i);//store entry in index i in temp
+        heap.set(i, heap.get(j));//move entry in index j to i
+        heap.set(j, temp);//move entry in temp to index j
     }
 
     /**
@@ -85,6 +102,16 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
      */
     protected void upheap(int j) {
         // TODO
+        while(j > 0)//until you reach root
+        {
+            int p = parent(j);//index of parent
+            if(compare(heap.get(j), heap.get(p)) >= 0)//check priority
+            {
+                break;
+            }
+            swap(j, p);//swap
+            j = p;//move up
+        }
     }
 
     /**
@@ -92,6 +119,25 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
      */
     protected void downheap(int j) {
         // TODO
+while(hasLeft(j))//as long as there is a left child
+{
+    int leftIndex = left(j);//find left child index
+    int smallchild = leftIndex;//assume left is smaller
+    if(hasRight(j))//check for right child
+
+    {
+        int rightIndex = right(j);//find index
+        if(compare(heap.get(leftIndex), heap.get(rightIndex)) > 0)//check if right child is smaller
+        {
+            smallchild = rightIndex;
+        }
+    }
+    if(compare(heap.get(smallchild), heap.get(j)) >= 0){//if the smalelr child is not less that the node break
+        break;
+    }
+    swap(j, smallchild);//swap the node with the smaller child
+    j = smallchild;//move the index down
+}
     }
 
     /**
@@ -99,6 +145,11 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
      */
     protected void heapify() {
         // TODO
+        int start = parent(size() -1);//last non-leaf
+        for(int j = start; j >= 0; j--)
+        {
+            downheap(j);//move down elements that are in the wrong position
+        }
     }
 
     // public methods
@@ -134,7 +185,14 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
     @Override
     public Entry<K, V> insert(K key, V value) throws IllegalArgumentException {
         // TODO
-        return null;
+        if(key == null){
+           throw new IllegalArgumentException("Error");
+        }
+        Entry<K, V> newEntry = new PQEntry<>(key, value);//make new entry
+        heap.add(newEntry);//add entry to end of heap
+        upheap(heap.size()-1);//restore the heap property from the end
+        return newEntry;
+
     }
 
     /**
@@ -145,7 +203,18 @@ public class HeapPriorityQueue<K, V> extends AbstractPriorityQueue<K, V> {
     @Override
     public Entry<K, V> removeMin() {
         // TODO
-        return null;
+        if(heap.isEmpty())
+        {
+            return null;
+        }
+        Entry<K, V> min = heap.getFirst();//get minimum entry
+        Entry<K, V> last = heap.removeLast();//remove the last entry
+        if(!heap.isEmpty())//if the heap is not empty
+        {
+            heap.set(0, last);//replace the root with the last entry
+            downheap(0);//restore the heap
+        }
+        return min;//
     }
 
     public String toString() {

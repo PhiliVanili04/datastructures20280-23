@@ -9,6 +9,7 @@ class BracketChecker {
 
     public void check() {
         // TODO
+
     }
 
     public static void main(String[] args) {

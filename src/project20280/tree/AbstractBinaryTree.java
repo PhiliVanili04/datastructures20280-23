@@ -25,11 +25,11 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
     @Override
     public Position<E> sibling(Position<E> p) {
         Position<E> parent = parent(p);
-        if (parent == null) return null;                  // p must be the root
-        if (p == left(parent))                            // p is a left child
-            return right(parent);                           // (right child might be null)
-        else                                              // p is a right child
-            return left(parent);                            // (left child might be null)
+        if (parent == null) return null;
+        if (p == left(parent))
+            return right(parent);
+        else
+            return left(parent);
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
      */
     @Override
     public Iterable<Position<E>> children(Position<E> p) {
-        List<Position<E>> snapshot = new ArrayList<>(2);    // max capacity of 2
+        List<Position<E>> snapshot = new ArrayList<>(2);
         if (left(p) != null)
             snapshot.add(left(p));
         if (right(p) != null)
@@ -89,7 +89,7 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
     public Iterable<Position<E>> inorder() {
         List<Position<E>> snapshot = new ArrayList<>();
         if (!isEmpty())
-            inorderSubtree(root(), snapshot);   // fill the snapshot recursively
+            inorderSubtree(root(), snapshot);
         return snapshot;
     }
 

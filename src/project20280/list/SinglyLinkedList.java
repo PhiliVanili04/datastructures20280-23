@@ -34,7 +34,7 @@ public class SinglyLinkedList<E> implements List<E> {
          * @return the element stored at the node
          */
         public E getElement() {
-            return null;
+            return element;
         }
 
         /**
@@ -75,54 +75,170 @@ public class SinglyLinkedList<E> implements List<E> {
     //@Override
     public int size() {
         // TODO
-        return 0;
+        return size;
     }
 
     //@Override
     public boolean isEmpty() {
         // TODO
-        return false;
+        if (size == 0) {
+            return true;
+        } else {
+
+            return false;
+        }
     }
 
     @Override
     public E get(int position) {
         // TODO
-        return null;
+        Node<E> curr = head;
+        if (position >= size() || position < 0) {
+            throw new IndexOutOfBoundsException("wrong element");
+        }
+        for(int i = 0; i < position; i++)
+        {
+            curr = curr.getNext();
+        }
+        return curr.getElement();
     }
 
     @Override
     public void add(int position, E e) {
         // TODO
+        Node<E> newData = new Node<>(e, null);//make new node
+        if(position > size()-1|| position < 0)//check if position is out of bounds
+        {
+            throw new IndexOutOfBoundsException("out of bounds");
+        }
+        if(position == 0)//check if node needs to be inserted at the start
+        {
+            newData.setNext((head));//set the new node to the next head
+            head = newData;//update
+        }
+        else{
+            Node<E> curr = head;//start from head
+            for(int i = 0; i < position-1; i++)
+            {
+                curr = curr.getNext();//move to next node
+
+            }
+            newData.setNext(curr.getNext());//insert new node
+            curr.setNext(newData);//link the node
+        }
+        size++;//increase size
     }
 
 
     @Override
     public void addFirst(E e) {
         // TODO
+        head = new Node<E>(e, head);//create new head node
+
+        size++;
     }
 
     @Override
     public void addLast(E e) {
         // TODO
+        Node<E> newest = new Node<E>(e, null);//create new ode
+        Node<E> last = head;//make last node the head
+        if(isEmpty()){//check for empty list
+            head = newest;
+        }
+        else{
+            while(last.getNext() != null)//loop until the next node is null
+            {
+                last = last.getNext();
+
+            }
+            last.setNext(newest);//set last node to new node
+
+        }
+        size++;//increase size
+
     }
 
     @Override
     public E remove(int position) {
         // TODO
-        return null;
+        if(position >= size() -1 || position < 0|| head == null)//check if out of bounds
+        {
+            System.out.println("Error");
+        }
+        if(position == 0)//check if element is at the start
+        {
+            E removedData = head.getElement();//store element
+            head = head.getNext();//set head to the next element
+            size--;//decrease size
+            return removedData;//return reomved element
+        }
+        Node<E> prev = null;
+        Node<E> curr = head;
+        for(int i = 0; i < position; i++)//iterate through positions
+        {
+            prev = curr;//set the previous to the current
+            curr = curr.getNext();//curr to the next
+        }
+
+        prev.setNext(curr.getNext());//set the next of the previous node to the next of the current
+        size--;//decrease size
+        return curr.getElement();//return what was the curr element
+
     }
 
     @Override
     public E removeFirst() {
         // TODO
-        return null;
+        if(head == null)//check if head is null
+        {
+            return null;
+        }
+        E removedData = head.getElement();
+        head = head.getNext();//set the head to the second node
+        size--;
+        return removedData;
     }
 
     @Override
     public E removeLast() {
         // TODO
-        return null;
+        if(head == null)//check if list is empty
+        {
+            return null;
+        }
+        Node<E> last = head;//start with last node being head
+        Node<E> previous = null;//intiliase prev as null
+        while(last.getNext() != null)//loop until last node is reached
+        {
+            previous = last;//update previous
+            last = last.getNext();//move to the next node
+        }
+        E removedData = last.getElement();//store data to be removed
+        if(previous == null)//if the list has one element
+        {
+            head = null;
+
+        }else{
+            previous.setNext(null);//set the second last node to null
+        }
+        size--;
+        return removedData;
     }
+    public void reverse() {
+        Node<E> prev = null;
+        Node<E> curr = head;
+        Node<E> next;
+
+        while (curr != null) {
+            next = curr.getNext();
+            curr.setNext(prev);
+            prev = curr;
+            curr = next;
+        }
+        head = prev;
+    }
+
 
     //@Override
     public Iterator<E> iterator() {
@@ -159,7 +275,7 @@ public class SinglyLinkedList<E> implements List<E> {
     }
 
     public static void main(String[] args) {
-        SinglyLinkedList<Integer> ll = new SinglyLinkedList<Integer>();
+        /*SinglyLinkedList<Integer> ll = new SinglyLinkedList<Integer>();
         System.out.println("ll " + ll + " isEmpty: " + ll.isEmpty());
         //LinkedList<Integer> ll = new LinkedList<Integer>();
 
@@ -192,7 +308,18 @@ public class SinglyLinkedList<E> implements List<E> {
         // Removes the item in the specified index
         ll.remove(2);
         System.out.println(ll);
-        
+
          */
+        SinglyLinkedList<Integer> ll = new SinglyLinkedList<>();
+        ll.addFirst(0);
+        ll.addFirst(1);
+        ll.addFirst(2);
+        ll.addFirst(3);
+        ll.addFirst(4);
+        ll.addLast(-1);
+
+        System.out.println("Original list: " + ll);
+        ll.reverse();
+        System.out.println("Reversed list: " + ll);
     }
 }

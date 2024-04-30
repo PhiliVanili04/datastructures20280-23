@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
     // a fixed capacity array of UnsortedTableMap that serve as buckets
     private UnsortedTableMap<K, V>[] table; // initialized within createTable
+    private int numCollisions = 0;
 
     /**
      * Creates a hash table with capacity 11 and prime factor 109345121.
@@ -52,8 +53,13 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
      */
     @Override
     protected V bucketGet(int h, K k) {
-        // TODO
-        return null;
+        UnsortedTableMap<K,V> bucket = table[h];
+        if(bucket == null)
+        {
+            return null;
+        }else {
+            return bucket.get(k);
+        }
     }
 
     /**
@@ -66,10 +72,65 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
      * @return previous value associated with k (or null, if no such entry)
      */
     @Override
-    protected V bucketPut(int h, K k, V v) {
+    /*protected V bucketPut(int h, K k, V v) {
         // TODO
-        return null;
+        UnsortedTableMap<K,V> bucket = table[h];//get the bucket at index h, if no bucket create one
+        if(bucket == null) {
+            bucket=table[h] = new UnsortedTableMap<>();
+        }
+        int size = bucket.size();//get the old size
+        V result = bucket.put(k, v);//insert key value into the bucket
+        n += (bucket.size() - size);//update total number of elemenets
+        return result;
+
+    }*/
+    protected V bucketPut(int h, K k, V v) {
+        UnsortedTableMap<K, V> bucket = table[h];
+        if (bucket == null) {
+            bucket = table[h] = new UnsortedTableMap<>();
+        } else if (!bucket.isEmpty()) {
+            numCollisions++; //increment collisions if there's already an item in the bucket
+        }
+        int oldSize = bucket.size();
+        V answer = bucket.put(k, v);
+        n += (bucket.size() - oldSize);
+        return answer;
     }
+
+
+    public boolean containsKey(K key) {
+        int h = hashValue(key);
+        UnsortedTableMap<K, V> bucket = table[h];
+        return bucket != null && bucket.findIndex(key) != -1;
+    }
+
+
+    public int getCollisions() {
+        return numCollisions;
+    }
+
+public double loadfactor()
+{
+    return (double)n / (double)capacity;
+}
+
+
+    public void clear() {
+        for (int i = 0; i < table.length; i++) {
+            if (table[i] != null) {
+                table[i].clear();  //clear each individual map
+            }
+        }
+        n = 0;
+    }
+
+
+    public void putAll(ChainHashMap<String, Integer> map) {
+        for (Entry<String, Integer> entry : map.entrySet()) {
+            put((K)entry.getKey(), (V)entry.getValue());
+        }
+    }
+
 
 
     /**
@@ -83,7 +144,15 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
     @Override
     protected V bucketRemove(int h, K k) {
         // TODO
-        return null;
+        UnsortedTableMap<K,V> bucket = table[h];//get the bucket at index h, if no bucket return null
+        if(bucket == null)
+        {
+            return null;
+        }
+        int size = bucket.size();//get the old size
+        V result = bucket.remove(k);//try remove the entry with the key
+        n -= (size = bucket.size());//if entry was removed update total
+        return result;
     }
 
     /**
@@ -109,6 +178,7 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
         return entries;
     }
 
+
     public String toString() {
         return entrySet().toString();
     }
@@ -124,5 +194,8 @@ public class ChainHashMap<K, V> extends AbstractHashMap<K, V> {
 
         m.remove(11);
         System.out.println("m: " + m);
+
     }
+
+
 }
